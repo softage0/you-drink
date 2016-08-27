@@ -67,9 +67,11 @@ void loop() {
     direction = random(2);
     if (direction) {
       turn_L(255, 255);
+      set_led_pattern(0,1);
 //      Serial.println("_spinLeft");
     } else {
       turn_R(255, 255);
+      set_led_pattern(0,2);
 //      Serial.println("_spinRight");
     }
 
@@ -104,6 +106,10 @@ void loop() {
     case '8':
     set_led_pattern(0,2);
     break;
+
+    case '9':
+    set_led_pattern(0,3);
+    break;
    
     case '&':
     set_led_pattern(1,1);
@@ -111,6 +117,10 @@ void loop() {
     
     case '*':
     set_led_pattern(1,2);
+    break;
+
+    case '(':
+    set_led_pattern(1,3);
     break;
 
     case 'u':
@@ -144,6 +154,10 @@ void loop() {
     previousMillis = millis();
     goForward = true;
     Serial.println("goForward");
+    set_led_pattern(0,3);
+    set_led_pattern(1,3);
+    set_led_pattern(2,3);
+    
   }
 
   if ( goForward == true && millis() - previousMillis > interval ) {
@@ -153,7 +167,7 @@ void loop() {
     cupWaited = true;
   }
 
-Serial.println(buttonState);
+//Serial.println(buttonState);
   if ( cupWaited == true && buttonState == HIGH ) {
     cupWaited = false;
     Serial.println("hold");

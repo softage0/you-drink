@@ -110,13 +110,13 @@ static void _script_reset_btm(uint8_t script_num)
   _script[script_num].count = 0;
 }
 
-static void _script_time_update(uint8_t script_num, uint8_t time_100ms)
+static void _script_time_update(uint8_t script_num, uint8_t time_100ms, uint8_t len)
 {
   _script[script_num].time ++;
   if( _script[script_num].time >= time_100ms ) { // time
     _script[script_num].time = 0;  
     _script[script_num].step ++;
-    if(_script[script_num].step >= (_script[script_num].len*2) ) { // string size
+    if(_script[script_num].step >= len ) { // string size
       _script[script_num].step = 1;  
       _script[script_num].count ++;        
     } 
@@ -143,8 +143,8 @@ static const uint32_t _color_pattern_A[12] = {
 
 // G R B W
 static const uint32_t _color_pattern_B[6] = {
-   _led_top.Color(0,100,10,0)
-  ,_led_top.Color(0,50,10,0)
+   _led_top.Color(0,20,100,0)
+  ,_led_top.Color(0,10,50,0)
   ,_led_top.Color(0,0,0,10)
   ,_led_top.Color(0,0,0,10)  
   ,_led_top.Color(0,0,0,10)
@@ -182,10 +182,32 @@ static const uint32_t _color_pattern_C[12] = {
 };
 
 // R G B
-static const uint32_t _color_pattern_L_1[6] = {
-   _led_top.Color(100,0,100)
-  ,_led_top.Color(100,0,100)
-  ,_led_top.Color(100,0,100)
+static const uint32_t _color_pattern_R_1[6] = {
+   _led_top.Color(0,0,100)
+  ,_led_top.Color(0,0,100)
+  ,_led_top.Color(0,0,100)
+  
+  ,_led_top.Color(0,0,50)
+  ,_led_top.Color(0,0,50)
+  ,_led_top.Color(0,0,50)
+};
+
+// G R B W
+static const uint32_t _color_pattern_R_2[6] = {
+   _led_top.Color(0,0,50)
+  ,_led_top.Color(0,0,50)
+  ,_led_top.Color(0,0,50)
+  
+  ,_led_top.Color(0,0,50)
+  ,_led_top.Color(0,0,50)  
+  ,_led_top.Color(0,0,50)
+};
+
+// G R B W
+static const uint32_t _color_pattern_L_1[6] = { 
+   _led_top.Color(0,0,50)
+  ,_led_top.Color(0,0,50)  
+  ,_led_top.Color(0,0,50)
   
   ,_led_top.Color(0,0,100)
   ,_led_top.Color(0,0,100)
@@ -194,35 +216,13 @@ static const uint32_t _color_pattern_L_1[6] = {
 
 // G R B W
 static const uint32_t _color_pattern_L_2[6] = {
-   _led_top.Color(0,0,100)
-  ,_led_top.Color(0,0,100)
-  ,_led_top.Color(0,0,100)
+   _led_top.Color(0,0,50)
+  ,_led_top.Color(0,0,50)  
+  ,_led_top.Color(0,0,50)
   
-  ,_led_top.Color(0,0,100)
-  ,_led_top.Color(0,0,100)  
-  ,_led_top.Color(0,0,100)
-};
-
-// G R B W
-static const uint32_t _color_pattern_R_1[6] = { 
-   _led_top.Color(0,0,100)
-  ,_led_top.Color(0,0,100)  
-  ,_led_top.Color(0,0,100)
-  
-  ,_led_top.Color(100,0,100)
-  ,_led_top.Color(100,0,100)
-  ,_led_top.Color(100,0,100)
-};
-
-// G R B W
-static const uint32_t _color_pattern_R_2[6] = {
-   _led_top.Color(0,0,100)
-  ,_led_top.Color(0,0,100)  
-  ,_led_top.Color(0,0,100)
-  
-  ,_led_top.Color(0,0,100)
-  ,_led_top.Color(0,0,100)  
-  ,_led_top.Color(0,0,100)
+  ,_led_top.Color(0,0,50)
+  ,_led_top.Color(0,0,50)  
+  ,_led_top.Color(0,0,50)
 };
 
 void _pattern_0_1_update() // left
@@ -238,8 +238,8 @@ void _pattern_0_1_update() // left
     _put_table_btm( _color_pattern_B2, _script[0].start_pos, 6, (_script[0].step-1)/2);
     _led_btm.show();
     _script[0].step++;
-  } else {
-    _script_time_update(0, 7);
+  } else {    
+    _script_time_update(0, 7, 12);
   }
 }
 
@@ -252,12 +252,13 @@ void _pattern_0_2_update() // left
       _put_table_btm( _color_pattern_R_1, _script[0].start_pos+6, 6, 0);
     } else {
       _put_table_btm( _color_pattern_R_2, _script[0].start_pos+6, 6, 0);
-    }
+    }    
     _put_table_btm( _color_pattern_B2, _script[0].start_pos, 6, 6- ((_script[0].step-1)/2));
+    
     _led_btm.show();
     _script[0].step++;
   } else {
-    _script_time_update(0, 7);
+    _script_time_update(0, 7, 12);
   }
 }
 
@@ -266,12 +267,12 @@ void _pattern_1_1_update()
   if( _script[1].step == 0 ) { _script_reset_top(1); return; }
 
   if( _script[1].step % 2 ) {
-    _led_top.setPixelColor(_script[1].start_pos, _led_top.Color(0,_script[1].step*10,0,0));
+    _led_top.setPixelColor(_script[1].start_pos, _led_top.Color(0,0,_script[1].step*10,0));
     _put_table_top( _color_pattern_B, _script[1].start_pos+1, _script[1].len-1, (_script[1].step-1)/2);
     _led_top.show();
     _script[1].step++;
   } else {
-    _script_time_update(1,10); 
+    _script_time_update(1,10, _script[1].len*2); 
   }  
 }
 
@@ -280,12 +281,12 @@ void _pattern_1_2_update()
   if( _script[1].step == 0 ) { _script_reset_top(1); return; }
 
   if( _script[1].step % 2 ) {
-    _led_top.setPixelColor(_script[1].start_pos, _led_top.Color(0,_script[1].step*10,0,0));
+    _led_top.setPixelColor(_script[1].start_pos, _led_top.Color(0,0,_script[1].step*10,0));
     _put_table_top( _color_pattern_B, _script[1].start_pos+1, _script[1].len-1, (_script[1].len-1)-((_script[1].step-1)/2));
     _led_top.show();
     _script[1].step++;
   } else {
-    _script_time_update(1,10);
+    _script_time_update(1,10, _script[1].len*2);
   }  
 }
 
@@ -298,7 +299,7 @@ void _pattern_2_1_update()
     _led_top.show();
     _script[2].step++;
   } else {
-    _script_time_update(2, 1);
+    _script_time_update(2, 1, _script[2].len*2);
   }
 }
 
@@ -306,17 +307,17 @@ void _pattern_2_2_update()
 {
   if( _script[2].step == 0 ) { _script_reset_top(2); return; }
 
-  if( _script[0].step % 2 ) {
+  if( _script[2].step % 2 ) {
     _put_table_top( _color_pattern_A, _script[2].start_pos, _script[2].len, 12- ((_script[2].step-1)/2));
     _led_top.show();
     _script[2].step++;
   } else {
-    _script_time_update(2,1); 
+    _script_time_update(2,1, _script[2].len*2); 
   }  
 }
 
-static uint8_t _color_buf[12];
-static uint8_t _dir_buf[12];
+static uint8_t _color_buf2[12];
+static uint8_t _dir_buf2[12];
 void _pattern_2_3_update()
 {
   uint8_t i;
@@ -324,10 +325,10 @@ void _pattern_2_3_update()
   if( _script[2].step == 0 ) { 
     _script_reset_top(2); 
     for(i=0; i<_script[2].len; i++) {
-      _color_buf[i] = sum - (sum%10); 
+      _color_buf2[i] = sum - (sum%10); 
       sum += i; 
-      _dir_buf[i] = 1;
-      _led_top.setPixelColor(i,_led_top.Color(0,_color_buf[i],_color_buf[i]));
+      _dir_buf2[i] = 1;
+      _led_top.setPixelColor(i,_led_top.Color(0,_color_buf2[i],_color_buf2[i]));
     }
     _led_top.show();
     return; 
@@ -335,19 +336,91 @@ void _pattern_2_3_update()
 
   if( _script[2].step % 2 ) {
     for(i=0; i<_script[2].len; i++) {
-      if(_dir_buf[i]) {
-        if( _color_buf[i] < 120 ) { _color_buf[i] += 10; }
-        else                      { _color_buf[i] -= 10; _dir_buf[i] = 0; }
+      if(_dir_buf2[i]) {
+        if( _color_buf2[i] < 120 ) { _color_buf2[i] += 10; }
+        else                      { _color_buf2[i] -= 10; _dir_buf2[i] = 0; }
       } else {
-        if( _color_buf[i] > 10 ) { _color_buf[i] -= 10; }
-        else                     { _color_buf[i] += 10; _dir_buf[i] = 1; }
+        if( _color_buf2[i] > 10 ) { _color_buf2[i] -= 10; }
+        else                     { _color_buf2[i] += 10; _dir_buf2[i] = 1; }
       }
-      _led_top.setPixelColor(i,_led_top.Color(0,_color_buf[i],_color_buf[i]));
+      _led_top.setPixelColor(i,_led_top.Color(0,_color_buf2[i],_color_buf2[i]));
     }
     _led_top.show();
     _script[2].step++;
   } else {
-    _script_time_update(2,3); 
+    _script_time_update(2,3, _script[2].len*2); 
+  }  
+}
+
+static uint8_t _color_buf0[12];
+static uint8_t _dir_buf0[12];
+void _pattern_0_3_update()
+{
+  uint8_t i;
+  uint8_t sum=0;
+  if( _script[0].step == 0 ) { 
+    _script_reset_btm(0); 
+    for(i=0; i<_script[0].len; i++) {
+      _color_buf0[i] = sum - (sum%10); 
+      sum += i; 
+      _dir_buf0[i] = 1;
+      _led_btm.setPixelColor(i,_led_top.Color(0,0,_color_buf2[i]));
+    }
+    _led_btm.show();
+    return; 
+  }
+
+  if( _script[0].step % 2 ) {
+    for(i=0; i<_script[0].len; i++) {
+      if(_dir_buf0[i]) {
+        if( _color_buf0[i] < 120 ) { _color_buf0[i] += 10; }
+        else                      { _color_buf0[i] -= 10; _dir_buf0[i] = 0; }
+      } else {
+        if( _color_buf0[i] > 10 ) { _color_buf0[i] -= 10; }
+        else                     { _color_buf0[i] += 10; _dir_buf0[i] = 1; }
+      }
+      _led_btm.setPixelColor(i,_led_top.Color(0,_color_buf0[i],_color_buf0[i]));
+    }
+    _led_btm.show();
+    _script[0].step++;
+  } else {
+    _script_time_update(0,3, _script[0].len*2); 
+  }  
+}
+
+static uint8_t _color_buf1[7];
+static uint8_t _dir_buf1[7];
+void _pattern_1_3_update()
+{
+  uint8_t i;
+  uint8_t sum=0;
+  if( _script[1].step == 0 ) { 
+    _script_reset_top(1); 
+    for(i=0; i<_script[1].len; i++) {
+      _color_buf1[i] = sum - (sum%10); 
+      sum += i; 
+      _dir_buf1[i] = 1;
+      _led_top.setPixelColor(i+_script[1].start_pos,_led_top.Color(0,_color_buf1[i]/2,_color_buf1[i]));
+    }
+    _led_top.show();
+    return; 
+  }
+
+  if( _script[1].step % 2 ) {
+    for(i=0; i<_script[1].len; i++) {
+      if(_dir_buf1[i]) {
+        if( _color_buf1[i] < 120 ) { _color_buf1[i] += 10; }
+        else                      { _color_buf1[i] -= 10; _dir_buf1[i] = 0; }
+      } else {
+        if( _color_buf1[i] > 10 ) { _color_buf1[i] -= 10; }
+        else                     { _color_buf1[i] += 10; _dir_buf1[i] = 1; }
+      }
+      _led_top.setPixelColor(i+_script[1].start_pos,_led_top.Color(0,_color_buf1[i]/2,_color_buf1[i]));
+    }
+    _led_top.show();
+    _script[1].step++;
+  } else {
+    _script_time_update(1,3, _script[1].len*2); 
   }  
 }
 
@@ -364,6 +437,9 @@ void led_update_10ms()
     case 2:
       _pattern_0_2_update();
       break;
+    case 3:
+      _pattern_0_3_update();
+      break;
     default:
       break;  
   }
@@ -375,6 +451,9 @@ void led_update_10ms()
       break;
     case 2:
       _pattern_1_2_update();
+      break;
+    case 3:
+      _pattern_1_3_update();
       break;
     default:
       break;  

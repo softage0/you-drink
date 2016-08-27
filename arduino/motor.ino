@@ -48,9 +48,15 @@ void turn_R (char a,char b)             //Turn Right
 void reverseSpin() {
       if (direction) {
       turn_R(255, 255);
+      set_led_pattern(0,2);
+      set_led_pattern(1,2);
+      set_led_pattern(2,2);
 //      Serial.println("_spinRight");
     } else {
       turn_L(255, 255);
+      set_led_pattern(0,1);
+      set_led_pattern(1,1);
+      set_led_pattern(2,1);
 //      Serial.println("_spinLeft");
     }
     direction = !direction;
