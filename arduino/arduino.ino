@@ -1,3 +1,7 @@
+#include <Timer.h> //https://github.com/JChristensen/Timer
+
+Timer timer;
+
 int bleSignal = 0;  // signal from bluetooth master
 bool randomMove = true;
 
@@ -19,6 +23,14 @@ void setup() {
 
   Serial.begin(115200);      //Set Baud Rate
   Serial.println("App control initialized");
+
+  led_setup();
+  timer.every(10,event_10ms);
+}
+
+void event_10ms()
+{ 
+  led_update_10ms();
 }
 
 void loop() {
@@ -61,6 +73,26 @@ void loop() {
     turnRight();
     break;
 
+    case '7':
+    set_led_pattern(0,1);
+    break;
+    
+    case '8':
+    set_led_pattern(0,2);
+    break;
+    
+    case '9':
+    set_led_pattern(0,3);
+    break;
+
+    case '&':
+    set_led_pattern(1,1);
+    break;
+    
+    case '*':
+    set_led_pattern(1,2);
+    break;
+    
     default:
     Serial.println(bleSignal);
   }
