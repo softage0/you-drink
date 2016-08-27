@@ -94,6 +94,10 @@ void loop() {
     case '*':
     set_led_pattern(1,2);
     break;
+
+    case 'x':
+    led_all_off();
+    break;
     
     default:
     Serial.println(bleSignal);
