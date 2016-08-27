@@ -26,11 +26,23 @@ void setup() {
 
   led_setup();
   timer.every(10,event_10ms);
+  button_setup();
 }
 
 void event_10ms()
 { 
   led_update_10ms();
+  button_update_10ms();
+}
+
+void on_button_up()
+{
+  Serial.println("Up");
+}
+
+void on_button_down()
+{
+  Serial.println("Down");
 }
 
 void loop() {
@@ -75,18 +87,13 @@ void loop() {
     break;
 
     case '7':
-    Serial.println('7!');
     set_led_pattern(0,1);
     break;
     
     case '8':
     set_led_pattern(0,2);
     break;
-    
-    case '9':
-    set_led_pattern(0,3);
-    break;
-
+   
     case '&':
     set_led_pattern(1,1);
     break;
@@ -95,6 +102,17 @@ void loop() {
     set_led_pattern(1,2);
     break;
 
+    case 'u':
+    set_led_pattern(2,1);
+    break;
+    
+    case 'i':
+    set_led_pattern(2,2);
+    break;
+    
+    case 'o':
+    set_led_pattern(2,3);
+    break;
     case 'x':
     led_all_off();
     break;
