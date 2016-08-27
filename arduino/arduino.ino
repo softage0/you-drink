@@ -35,13 +35,14 @@ void event_10ms()
 
 void loop() {
   timer.update();
-//  playSong(1);
 
   // put your main code here, to run repeatedly:
  if (Serial.available() > 0)  {
   bleSignal = Serial.read();
   switch(bleSignal) {
-    case 49:  // '1' - start
+    case '1':   // start
+    playSong(3);
+    set_led_pattern(0,1);
     direction = random(2);
     if (direction) {
       turn_L(255, 255);
@@ -54,23 +55,23 @@ void loop() {
     interval = random(3000, 10000);
     previousMillis = millis();
     spinStart = true;
-    Serial.println("spinStart");
+    Serial.println("startSpin");
     break;
 
-    case 50:  // '2' - stop
+    case '2':   // stop
     stop();
     Serial.println("gameStop");
     break;
 
-    case 51:  // '3' - reverse during spinning
+    case '3':   // reverse during spinning
     reverseSpin();
     break;
 
-    case 52:   // '4' - turn left when going forward
+    case '4':   // turn left when going forward
     turnLeft();
     break;
 
-    case 53:   // '5' - turn right when going forward
+    case '5':   // turn right when going forward
     turnRight();
     break;
 
@@ -104,10 +105,10 @@ void loop() {
   // interval functions
   //
   if ( spinStart == true && millis() - previousMillis > interval ) {
-    advance(50, 50);
+    advance(100, 100);
     spinStart = false;
   
-    interval = 3000;
+    interval = 10000;
     previousMillis = millis();
     goForward = true;
     Serial.println("goForward");

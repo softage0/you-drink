@@ -104,41 +104,14 @@
 #define NOTE_CS8 4435
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
- 
-#define  c3    7634
-#define  d3    6803
-#define  e3    6061
-#define  f3    5714
-#define  g3    5102
-#define  a3    4545
-#define  b3    4049
-#define  c4    3816    // 261 Hz 
-#define  d4    3401    // 294 Hz 
-#define  e4    3030    // 329 Hz 
-#define  f4    2865    // 349 Hz 
-#define  g4    2551    // 392 Hz 
-#define  a4    2272    // 440 Hz 
-#define  a4s   2146
-#define  b4    2028    // 493 Hz 
-#define  c5    1912    // 523 Hz
-#define  d5    1706
-#define  d5s   1608
-#define  e5    1517    // 659 Hz
-#define  f5    1433    // 698 Hz
-#define  g5    1276
-#define  a5    1136
-#define  a5s   1073
-#define  b5    1012
-#define  c6    955
-#define  R     0      // Define a special note, 'R', to represent a rest
 
-#define melodyPin 3
+#define MELODY_PIN 3
 
 //Mario main theme melody
 int melody[] = {
   NOTE_E7, NOTE_E7, 0, NOTE_E7,
   0, NOTE_C7, NOTE_E7, 0,
-  NOTE_G7, 0, 0,  0,
+  NOTE_G7, 0, 0, 0, 0,
   NOTE_G6, 0, 0, 0,
  
   NOTE_C7, 0, 0, NOTE_G6,
@@ -233,17 +206,6 @@ int underworld_tempo[] = {
   3, 3, 3
 };
 
-// Melody 1: Star Wars Imperial March
-int melody1[] = {  a4, R,  a4, R,  a4, R,  f4, R, c5, R,  a4, R,  f4, R, c5, R, a4, R,  e5, R,  e5, R,  e5, R,  f5, R, c5, R,  g5, R,  f5, R,  c5, R, a4, R};
-int beats1[]  = {  50, 20, 50, 20, 50, 20, 40, 5, 20, 5,  60, 10, 40, 5, 20, 5, 60, 80, 50, 20, 50, 20, 50, 20, 40, 5, 20, 5,  60, 10, 40, 5,  20, 5, 60, 40};
- 
-// Melody 2: Star Wars Theme
-int melody2[] = {  f4,  f4, f4,  a4s,   f5,  d5s,  d5,  c5, a5s, f5, d5s,  d5,  c5, a5s, f5, d5s, d5, d5s, c5};
-int beats2[]  = {  21,  21, 21,  128,  128,   21,  21,  21, 128, 64,  21,  21,  21, 128, 64,  21, 21,  21, 128 }; 
-
-int song = 0;
-long previousMicros = 0;
-
 void sing(int* melody, int* beats, int size) {
     for (int thisNote = 0; thisNote < size; thisNote++) {
  
@@ -252,8 +214,7 @@ void sing(int* melody, int* beats, int size) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / beats[thisNote];
  
-  Serial.println(melody[thisNote]);
-      buzz(melodyPin, melody[thisNote], noteDuration);
+      buzz(MELODY_PIN, melody[thisNote], noteDuration);
  
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -261,7 +222,7 @@ void sing(int* melody, int* beats, int size) {
       delay(pauseBetweenNotes);
  
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(MELODY_PIN, 0, noteDuration);
     }
 }
 
@@ -276,10 +237,8 @@ void playSong(int s) {
     sing(underworld_melody, underworld_tempo, sizeof(underworld_melody) / sizeof(int));
     break;
     case 3:
-    sing(melody1, beats1, sizeof(melody1) / sizeof(int));
-    break;
-    case 4:
-    sing(melody2, beats2, sizeof(melody2) / sizeof(int));
+    Serial.println("'Mario Theme - short'");
+    sing(melody, tempo, 14);
     break;
   }
 }
