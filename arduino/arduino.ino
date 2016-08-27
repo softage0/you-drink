@@ -34,6 +34,7 @@ void event_10ms()
 }
 
 void loop() {
+  timer.update();
 //  playSong(1);
 
   // put your main code here, to run repeatedly:
@@ -74,6 +75,7 @@ void loop() {
     break;
 
     case '7':
+    Serial.println('7!');
     set_led_pattern(0,1);
     break;
     
