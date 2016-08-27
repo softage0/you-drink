@@ -2,12 +2,19 @@
 
 Timer timer;
 
+const int buttonPin = 8;     // the number of the pushbutton pin
+const int ledPin =  13;      // the number of the LED pin
+
+// variables will change:
+int buttonState = 0;         // variable for reading the pushbutton status
+
 int bleSignal = 0;  // signal from bluetooth master
 bool randomMove = true;
 
 bool direction = false;   // true: left, false: right
 bool spinStart = false;
 bool goForward = false;
+bool cupWaited = false;
 unsigned long previousMillis = 0;   // for interval
 long interval = 0;
 
@@ -18,21 +25,20 @@ void setup() {
   for(i=4;i<=7;i++) {   // motor
     pinMode(i, OUTPUT);
   }
-  pinMode(3, OUTPUT);   //buzzer
-  pinMode(13, OUTPUT);  //led indicator when singing a note
-
+  pinMode(9, OUTPUT);   //buzzer
+  pinMode(ledPin, OUTPUT);  //led indicator when singing a note
   Serial.begin(115200);      //Set Baud Rate
   Serial.println("App control initialized");
 
   led_setup();
   timer.every(10,event_10ms);
   button_setup();
+  led_all_off();
 }
 
 void event_10ms()
 { 
   led_update_10ms();
-  button_update_10ms();
 }
 
 void on_button_up()
@@ -48,13 +54,16 @@ void on_button_down()
 void loop() {
   timer.update();
 
+  buttonState = digitalRead(buttonPin);
+
   // put your main code here, to run repeatedly:
  if (Serial.available() > 0)  {
   bleSignal = Serial.read();
+
   switch(bleSignal) {
     case '1':   // start
     playSong(3);
-    set_led_pattern(0,1);
+//    set_led_pattern(0,1);
     direction = random(2);
     if (direction) {
       turn_L(255, 255);
@@ -72,6 +81,7 @@ void loop() {
 
     case '2':   // stop
     stop();
+    led_all_off();
     Serial.println("gameStop");
     break;
 
@@ -138,7 +148,16 @@ void loop() {
 
   if ( goForward == true && millis() - previousMillis > interval ) {
     goForward = false;
+    stop();
     Serial.println("arrived");
+    cupWaited = true;
+  }
+
+Serial.println(buttonState);
+  if ( cupWaited == true && buttonState == HIGH ) {
+    cupWaited = false;
+    Serial.println("hold");
+    led_all_off();
   }
 
   //

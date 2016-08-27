@@ -51,6 +51,8 @@ void led_setup() {
   
   _led_top.begin();
   _led_top.show(); // Initialize all pixels to 'off'
+  _led_btm.begin();
+  _led_btm.show(); // Initialize all pixels to 'off'
 }
 
 static void _led_fill_top(uint8_t start, uint8_t len, uint32_t color)
@@ -407,6 +409,7 @@ void led_all_off()
   _led_fill_top(0,_led_top.numPixels(), 0);
   _led_fill_btm(0,_led_btm.numPixels(), 0);
   _led_top.show();
+  _led_btm.show();
   _script[0].index = 0;
   _script[1].index = 0;
   _script[2].index = 0;

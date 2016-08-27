@@ -5,7 +5,6 @@ static uint8_t _db_count;
 void button_setup()
 {
   pinMode(PIN, INPUT_PULLUP);  
-  _pin_state = digitalRead( PIN );
 }
 
 void button_update_10ms()
