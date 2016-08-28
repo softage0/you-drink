@@ -66,12 +66,16 @@ void loop() {
 //    set_led_pattern(0,1);
     direction = random(2);
     if (direction) {
-      turn_L(255, 255);
+      turn_L(150, 150);
       set_led_pattern(0,1);
+      set_led_pattern(1,1);
+      set_led_pattern(2,1);
 //      Serial.println("_spinLeft");
     } else {
-      turn_R(255, 255);
+      turn_R(150, 150);
       set_led_pattern(0,2);
+      set_led_pattern(1,2);
+      set_led_pattern(1,2);
 //      Serial.println("_spinRight");
     }
 
@@ -147,10 +151,10 @@ void loop() {
   // interval functions
   //
   if ( spinStart == true && millis() - previousMillis > interval ) {
-    advance(100, 100);
+    advance(90, 90);
     spinStart = false;
   
-    interval = 10000;
+    interval = 4000;
     previousMillis = millis();
     goForward = true;
     Serial.println("goForward");
@@ -163,6 +167,9 @@ void loop() {
   if ( goForward == true && millis() - previousMillis > interval ) {
     goForward = false;
     stop();
+    set_led_pattern(0,1);
+    set_led_pattern(1,2);
+    set_led_pattern(2,1);
     Serial.println("arrived");
     cupWaited = true;
   }
