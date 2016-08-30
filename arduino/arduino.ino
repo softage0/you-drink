@@ -1,10 +1,10 @@
 #include <Timer.h> //https://github.com/JChristensen/Timer
 
-const int MOTOR_PIN_FIRST = 4;
-const int MOTOR_PIN_LAST = 7;
-const int BUTTON_PIN = 8;     // the number of the cup-pressed button pin
-const int BUZZER_PIN = 9;
-const int LED_PIN =  13;      // the number of the LED pin
+#define MOTOR_PIN_FIRST 4
+#define MOTOR_PIN_LAST 7
+#define BUTTON_PIN 8    // the number of the cup-pressed button pin
+#define BUZZER_PIN 9
+#define LED_PIN 13      // the number of the LED pin
 
 int bleSignal = 0;  // signal from bluetooth master
 bool randomMove = true;
@@ -91,6 +91,9 @@ void loop() {
         break;
 
       case '2':   // stop
+        spinStart = false;
+        goForward = false;
+        cupWaited = false;
         stop();
         led_all_off();
         Serial.println("gameStop");
