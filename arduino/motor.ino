@@ -64,16 +64,17 @@ void reverseSpin() {
 }
 
 void turnLeft() {
-    advance(60, 90);
+    advance(90, 120);
     delay(500);
-    advance(90, 90);
+    advance(120, 120);
 //    Serial.println("_turnLeft");
 }
 
 void turnRight() {
-    advance(90, 60);
+    advance(120, 90);
     delay(500);
-    advance(90, 90);
+    advance(120, 120);
 //    Serial.println("_turnRight");
 }
+
 

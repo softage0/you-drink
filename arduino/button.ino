@@ -1,19 +1,18 @@
-#define PIN 8
 static uint8_t _pin_state;
 static uint8_t _db_count;
 
 void button_setup()
 {
-  pinMode(PIN, INPUT_PULLUP);  
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
 }
 
 void button_update_10ms()
 {
   uint8_t pin;
-  pin = digitalRead( PIN );
+  pin = digitalRead(BUTTON_PIN);
 
   if( pin != _pin_state ) {
-    _db_count = 5;  
+    _db_count = 50;
   } else {
     if( _db_count ) {
       _db_count --;
@@ -24,5 +23,5 @@ void button_update_10ms()
     }  
   }
   _pin_state = pin;
-  
 }
+

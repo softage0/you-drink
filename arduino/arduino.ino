@@ -1,12 +1,10 @@
 #include <Timer.h> //https://github.com/JChristensen/Timer
 
-Timer timer;
-
-const int buttonPin = 8;     // the number of the pushbutton pin
-const int ledPin =  13;      // the number of the LED pin
-
-// variables will change:
-int buttonState = 0;         // variable for reading the pushbutton status
+const int MOTOR_PIN_FIRST = 4;
+const int MOTOR_PIN_LAST = 7;
+const int BUTTON_PIN = 8;     // the number of the cup-pressed button pin
+const int BUZZER_PIN = 9;
+const int LED_PIN =  13;      // the number of the LED pin
 
 int bleSignal = 0;  // signal from bluetooth master
 bool randomMove = true;
@@ -18,32 +16,40 @@ bool cupWaited = false;
 unsigned long previousMillis = 0;   // for interval
 long interval = 0;
 
+Timer timer;
+
 
 void setup() {
   // put your setup code here, to run once:
   int i;
-  for(i=4;i<=7;i++) {   // motor
+  for (i = MOTOR_PIN_FIRST; i <= MOTOR_PIN_LAST; i++) { // motor
     pinMode(i, OUTPUT);
   }
-  pinMode(9, OUTPUT);   //buzzer
-  pinMode(ledPin, OUTPUT);  //led indicator when singing a note
+  pinMode(BUZZER_PIN, OUTPUT);   //buzzer
+  pinMode(LED_PIN, OUTPUT);  //led indicator when singing a note
   Serial.begin(115200);      //Set Baud Rate
   Serial.println("App control initialized");
 
   led_setup();
-  timer.every(10,event_10ms);
+  timer.every(10, event_10ms);
   button_setup();
   led_all_off();
 }
 
 void event_10ms()
-{ 
+{
   led_update_10ms();
+  button_update_10ms();
 }
 
 void on_button_up()
 {
   Serial.println("Up");
+  if ( cupWaited == true ) {
+    cupWaited = false;
+    led_all_off();
+    Serial.println("hold");
+  }
 }
 
 void on_button_down()
@@ -54,147 +60,150 @@ void on_button_down()
 void loop() {
   timer.update();
 
-  buttonState = digitalRead(buttonPin);
-
   // put your main code here, to run repeatedly:
- if (Serial.available() > 0)  {
-  bleSignal = Serial.read();
+  if (Serial.available() > 0)  {
+    bleSignal = Serial.read();
 
-  switch(bleSignal) {
-    case '1':   // start
-    playSong(3);
-//    set_led_pattern(0,1);
-    direction = random(2);
-    if (direction) {
-      turn_L(150, 150);
-      set_led_pattern(0,1);
-      set_led_pattern(1,1);
-      set_led_pattern(2,1);
-//      Serial.println("_spinLeft");
-    } else {
-      turn_R(150, 150);
-      set_led_pattern(0,2);
-      set_led_pattern(1,2);
-      set_led_pattern(1,2);
-//      Serial.println("_spinRight");
+    switch (bleSignal) {
+      case '1':   // start
+        if (cupWaited) break;
+        playSong(3);
+        //    set_led_pattern(0,1);
+        direction = random(2);
+        if (direction) {
+          turn_L(150, 150);
+          set_led_pattern(0, 1);
+          set_led_pattern(1, 1);
+          set_led_pattern(2, 1);
+          //      Serial.println("_spinLeft");
+        } else {
+          turn_R(150, 150);
+          set_led_pattern(0, 2);
+          set_led_pattern(1, 2);
+          set_led_pattern(1, 2);
+          //      Serial.println("_spinRight");
+        }
+
+        interval = random(3000, 10000);
+        previousMillis = millis();
+        spinStart = true;
+        Serial.println("startSpin");
+        break;
+
+      case '2':   // stop
+        stop();
+        led_all_off();
+        Serial.println("gameStop");
+        break;
+
+      case '3':   // reverse during spinning
+        if (cupWaited) break;
+        reverseSpin();
+        break;
+
+      case '4':   // turn left when going forward
+        if (cupWaited) break;
+        turnLeft();
+        break;
+
+      case '5':   // turn right when going forward
+        if (cupWaited) break;
+        turnRight();
+        break;
+
+      case '7':
+        set_led_pattern(0, 1);
+        break;
+
+      case '8':
+        set_led_pattern(0, 2);
+        break;
+
+      case '9':
+        set_led_pattern(0, 3);
+        break;
+
+      case '&':
+        set_led_pattern(1, 1);
+        break;
+
+      case '*':
+        set_led_pattern(1, 2);
+        break;
+
+      case '(':
+        set_led_pattern(1, 3);
+        break;
+
+      case 'u':
+        set_led_pattern(2, 1);
+        break;
+
+      case 'i':
+        set_led_pattern(2, 2);
+        break;
+
+      case 'o':
+        set_led_pattern(2, 3);
+        break;
+      case 'x':
+        led_all_off();
+        break;
+
+      default:
+        Serial.println(bleSignal);
     }
-
-    interval = random(3000, 10000);
-    previousMillis = millis();
-    spinStart = true;
-    Serial.println("startSpin");
-    break;
-
-    case '2':   // stop
-    stop();
-    led_all_off();
-    Serial.println("gameStop");
-    break;
-
-    case '3':   // reverse during spinning
-    reverseSpin();
-    break;
-
-    case '4':   // turn left when going forward
-    turnLeft();
-    break;
-
-    case '5':   // turn right when going forward
-    turnRight();
-    break;
-
-    case '7':
-    set_led_pattern(0,1);
-    break;
-    
-    case '8':
-    set_led_pattern(0,2);
-    break;
-
-    case '9':
-    set_led_pattern(0,3);
-    break;
-   
-    case '&':
-    set_led_pattern(1,1);
-    break;
-    
-    case '*':
-    set_led_pattern(1,2);
-    break;
-
-    case '(':
-    set_led_pattern(1,3);
-    break;
-
-    case 'u':
-    set_led_pattern(2,1);
-    break;
-    
-    case 'i':
-    set_led_pattern(2,2);
-    break;
-    
-    case 'o':
-    set_led_pattern(2,3);
-    break;
-    case 'x':
-    led_all_off();
-    break;
-    
-    default:
-    Serial.println(bleSignal);
   }
- }
 
   //
   // interval functions
   //
-  if ( spinStart == true && millis() - previousMillis > interval ) {
-    advance(90, 90);
+  if (spinStart == true && millis() - previousMillis > interval) {
+    advance(120, 120);
     spinStart = false;
-  
+
     interval = 4000;
     previousMillis = millis();
     goForward = true;
     Serial.println("goForward");
-    set_led_pattern(0,3);
-    set_led_pattern(1,3);
-    set_led_pattern(2,3);
-    
+    set_led_pattern(0, 3);
+    set_led_pattern(1, 3);
+    set_led_pattern(2, 3);
+
   }
 
-  if ( goForward == true && millis() - previousMillis > interval ) {
+  if (goForward == true && millis() - previousMillis > interval) {
     goForward = false;
     stop();
-    set_led_pattern(0,1);
-    set_led_pattern(1,2);
-    set_led_pattern(2,1);
+    set_led_pattern(0, 1);
+    set_led_pattern(1, 2);
+    set_led_pattern(2, 1);
     Serial.println("arrived");
     cupWaited = true;
-  }
-
-//Serial.println(buttonState);
-  if ( cupWaited == true && buttonState == HIGH ) {
-    cupWaited = false;
-    Serial.println("hold");
-    led_all_off();
   }
 
   //
   // random move functions
   //
-  if ( randomMove ) {
-    if ( spinStart == true && !(millis() - previousMillis) % 500 && !random(3) ) {
+  if (randomMove) {
+    if (spinStart && !((millis() - previousMillis) % 1000) && !random(3)) {
       reverseSpin();
     }
-    if ( goForward == true && !(millis() - previousMillis) % 100 && !random(3) ) {
-      if (random(2)) {
-        turnLeft();
-      } else {
-        turnRight();
+    if (goForward && !((millis() - previousMillis) % 200) && !random(3)) {
+      switch (random(3)) {
+        case 0:
+          turnLeft();
+          break;
+        case 1:
+          turnRight();
+          break;
+        case 2:
+          back_off(100, 100);
+          delay(500);
+          advance(120, 120);
+          break;
       }
-    } 
+    }
   }
 }
 
