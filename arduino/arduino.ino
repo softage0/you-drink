@@ -6,8 +6,13 @@
 #define BUZZER_PIN 9
 #define LED_PIN 13      // the number of the LED pin
 
+#define SPIN_SPEED 120
+#define FORWARD_SPEED 120
+#define TURN_INNER_TIRE_SPEED 60
+#define BACKOFF_SPEED 80
+
 int bleSignal = 0;  // signal from bluetooth master
-bool randomMove = true;
+bool randomMove = false;
 
 bool direction = false;   // true: left, false: right
 bool spinStart = false;
@@ -44,7 +49,7 @@ void event_10ms()
 
 void on_button_up()
 {
-  Serial.println("Up");
+//  Serial.println("Up");
   if ( cupWaited == true ) {
     cupWaited = false;
     led_all_off();
@@ -54,7 +59,7 @@ void on_button_up()
 
 void on_button_down()
 {
-  Serial.println("Down");
+//  Serial.println("Down");
 }
 
 void loop() {
@@ -71,13 +76,13 @@ void loop() {
         //    set_led_pattern(0,1);
         direction = random(2);
         if (direction) {
-          turn_L(150, 150);
+          spin_L(SPIN_SPEED, SPIN_SPEED);
           set_led_pattern(0, 1);
           set_led_pattern(1, 1);
           set_led_pattern(2, 1);
           //      Serial.println("_spinLeft");
         } else {
-          turn_R(150, 150);
+          spin_R(SPIN_SPEED, SPIN_SPEED);
           set_led_pattern(0, 2);
           set_led_pattern(1, 2);
           set_led_pattern(1, 2);
@@ -126,6 +131,14 @@ void loop() {
         set_led_pattern(0, 3);
         break;
 
+      case 'a':
+        randomMove = true;
+        break;
+
+      case 'b':
+        randomMove = false;
+        break;
+
       case '&':
         set_led_pattern(1, 1);
         break;
@@ -162,10 +175,10 @@ void loop() {
   // interval functions
   //
   if (spinStart == true && millis() - previousMillis > interval) {
-    advance(120, 120);
+    advance(FORWARD_SPEED, FORWARD_SPEED);
     spinStart = false;
 
-    interval = 4000;
+    interval = 3000;
     previousMillis = millis();
     goForward = true;
     Serial.println("goForward");
@@ -201,9 +214,9 @@ void loop() {
           turnRight();
           break;
         case 2:
-          back_off(100, 100);
+          back_off(BACKOFF_SPEED, BACKOFF_SPEED);
           delay(500);
-          advance(120, 120);
+          advance(FORWARD_SPEED, FORWARD_SPEED);
           break;
       }
     }

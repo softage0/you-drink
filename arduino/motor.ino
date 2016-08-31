@@ -30,14 +30,14 @@ void back_off (char a,char b)          //Move backward
   analogWrite (E2,b);    
   digitalWrite(M2,HIGH);
 }
-void turn_L (char a,char b)             //Turn Left
+void spin_L (char a,char b)             //Turn Left
 {
   analogWrite (E1,a);
   digitalWrite(M1,HIGH);    
   analogWrite (E2,b);    
   digitalWrite(M2,LOW);
 }
-void turn_R (char a,char b)             //Turn Right
+void spin_R (char a,char b)             //Turn Right
 {
   analogWrite (E1,a);
   digitalWrite(M1,LOW);    
@@ -47,13 +47,13 @@ void turn_R (char a,char b)             //Turn Right
 
 void reverseSpin() {
       if (direction) {
-      turn_R(150, 150);
+      spin_R(SPIN_SPEED, SPIN_SPEED);
       set_led_pattern(0,2);
       set_led_pattern(1,2);
       set_led_pattern(2,2);
 //      Serial.println("_spinRight");
     } else {
-      turn_L(150, 150);
+      spin_L(SPIN_SPEED, SPIN_SPEED);
       set_led_pattern(0,1);
       set_led_pattern(1,1);
       set_led_pattern(2,1);
@@ -64,16 +64,16 @@ void reverseSpin() {
 }
 
 void turnLeft() {
-    advance(90, 120);
+    advance(TURN_INNER_TIRE_SPEED, FORWARD_SPEED);
     delay(500);
-    advance(120, 120);
+    advance(FORWARD_SPEED, FORWARD_SPEED);
 //    Serial.println("_turnLeft");
 }
 
 void turnRight() {
-    advance(120, 90);
+    advance(FORWARD_SPEED, TURN_INNER_TIRE_SPEED);
     delay(500);
-    advance(120, 120);
+    advance(FORWARD_SPEED, FORWARD_SPEED);
 //    Serial.println("_turnRight");
 }
 
